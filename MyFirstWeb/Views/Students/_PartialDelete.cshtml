@@ -1,0 +1,67 @@
+﻿@model MyStudentDAL.Models.Students
+<div class="modal fade" tabindex="-1" id="delModal"
+     data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    &times;
+                </button>
+                <h4 class="modal-title">Do want to delete this?</h4>
+            </div>
+            <div class="modal-body">
+                <dl class="dl-horizontal">
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Ratings.Name)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.Ratings.Name)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Name)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.Name)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.TotalMarks)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.TotalMarks)
+                    </dd>
+
+                </dl>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@using (Html.BeginForm())
+{
+
+    <div class="form-actions no-color">
+        <input type="button" value="Delete" id="btnDel" class="btn btn-block btn-primary" />
+        <br><br><br>
+        @Html.ActionLink("Back to List", "Index", "Students")
+    </div>
+
+
+}
+<script>
+        $(document).ready(function () {
+            $("#btnDel").click(function () {
+                $('#delModal').modal('show');
+            });
+        });
+</script>
+

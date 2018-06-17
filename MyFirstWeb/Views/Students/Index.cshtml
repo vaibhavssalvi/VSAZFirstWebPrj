@@ -1,0 +1,171 @@
+﻿@model IEnumerable<MyStudentDAL.Models.Students>
+
+@{
+    ViewBag.Title = "List Students";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+<div class="col-md-12 col-md-offset-0">
+    <div class="well">
+        <!--This table contains the fields that we want to capture to register a new user-->
+        <table class="table">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TotalMarks)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Ratings.Name)
+                </th>
+                <th></th>
+            </tr>
+            @foreach (var item in Model)
+        {
+            <tr id="row_@item.Id">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalMarks)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Ratings.Name)
+                </td>
+
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                    <a href="#" class="btn btn-danger" id="#delRef" onclick="ConfirmDelete(@item.Id)"><i class="glyphicon glyphicon-trash"></i></a>
+                    <a href="#" class="btn btn-success" id="#showRef" onclick="ShowEmp(@item.Id)"><i class="glyphicon glyphicon-eye-open"></i></a>
+                </td>
+            </tr>
+    }
+        </table>
+
+        <input type="hidden" id="delEmpId" />
+        <!--Bootstrap modal dialog that shows up when regsitration is successful-->
+        <div class="modal fade" tabindex="-1" id="delModal"
+             data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">
+                            &times;
+                        </button>
+                        <h4 class="modal-title">Do want to delete?</h4>
+                    </div>
+                    <div class="modal-body" id="myModalBodyDiv">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">
+                            Cancel
+                        </button>
+                        <button type="button" class="btn btn-success" data-dismiss="modal" id="showFooter" onclick="DeleteStudent()">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Bootstrap alert to display any validation errors-->
+        <div id="divError" class="alert alert-danger collapse">
+            <a id="linkClose" href="#" class="close">&times;</a>
+            <div id="divErrorText"></div>
+        </div>
+    </div>
+    
+</div>
+
+<script>
+    //$(document).ready(function () {
+    // Show the student details to delete
+    var ConfirmDelete = function (empId) {
+        //debugger
+            $('#delEmpId').val(empId);
+
+            $.ajax({
+                url: 'Students/ConfirmDelete',
+                method: 'POST',
+                data: {
+                    //email: $('#txtEmail').val(),
+                    Id: empId
+                },
+                success: function (response) {
+                    $('#myModalBodyDiv').html(response);
+                    $('#showFooter').show();
+                    $('#delModal').modal('show');                    
+                },
+                error: function (jqXHR) {
+                    $('#divErrorText').text(jqXHR.responseText);
+                    $('#divError').show('fade');
+                }
+            });
+    };
+
+    var DeleteStudent = function () {
+        //debugger
+        var empId = $('#delEmpId').val();   
+
+        $.ajax({
+            url: 'Students/Delete',
+            method: 'POST',
+            data: {
+                //email: $('#txtEmail').val(),
+                id: empId
+            },
+            success: function (response) {
+                $('#delModal').modal('hide');                
+                $('#row_' + empId).remove();
+                //alert($('#delEmpId').val());
+            },
+            error: function (jqXHR) {
+                $('#divErrorText').text(jqXHR.responseText);
+                $('#divError').show('fade');
+            }
+        });
+    };
+
+    // Show the student details to delete
+    var ShowEmp = function (empId) {
+        //debugger
+        var url = "Students/ConfirmDelete?Id=" + empId;
+        $('#myModalBodyDiv').load(url, function () {
+                $('#showFooter').hide();
+                $('#delModal').modal('show');
+            },
+        );
+        //$.ajax({
+        //    url: 'ConfirmDelete',
+        //    method: 'POST',
+        //    data: {
+        //        //email: $('#txtEmail').val(),
+        //        Id: empId
+        //    },
+        //    success: function (response) {
+        //        $('#myModalBodyDiv').html(response);
+        //        $('#showFooter').hide();
+        //        $('#delModal').modal('show');
+        //    },
+        //    error: function (jqXHR) {
+        //        $('#divErrorText').text(jqXHR.responseText);
+        //        $('#divError').show('fade');
+        //    }
+        //});
+    };
+
+    //Close the bootstrap alert
+    //$('#linkClose').click(function () {
+    //    $('#divError').hide('fade');
+    //});
+    //});
+</script>
